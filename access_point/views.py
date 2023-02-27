@@ -15,6 +15,5 @@ class AccessPointViewSet(viewsets.ModelViewSet):
     serializer_class = AccessPointSerializer
     pagination_class = AccessPointPagination
 
-    #lista de fechas de la jornada universitaria
     def get_queryset(self):
         return AccessPointsWifiCdmx.objects.all()
