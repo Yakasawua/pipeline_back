@@ -20,11 +20,11 @@ class Command(BaseCommand):
             for row in csv_data:
                 count += 1
                 accesspoint = AccessPointsWifiCdmx(
-                    id_txt=unidecode(row[0]),
+                    id_txt=unidecode(row[0]), #it is transformed to unicode since some accents have another format
                     program=unidecode(row[1]),
                     install_date=row[2],
-                    latitude=row[3],
-                    longitude=row[4],
+                    latitude=row[3].replace(" ", ""), #some coordinates have spaces so they are removed first
+                    longitude=row[4].replace(" ", ""),
                     colony=unidecode(row[5]),
                     town_hall=unidecode(row[6])
                 )
