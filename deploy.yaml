@@ -1,0 +1,31 @@
+apiVersion: app/v1
+kind: Deployment
+metadata:
+  name: pipeline-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pipeline
+  template:
+    metadata:
+      labels:
+        app: pipeline
+    spec:
+      containers:
+        - name: pipeline-container
+        image: yakasawua/pipeline:1.0.0
+        ports:
+          - name: http-port
+            containerPort: 8011
+        env:
+          - name: DATABASE_NAME
+            value: pipelinedb
+          - name: DATABASE_USER
+            value: root
+          - name: DATABASE_HOST
+            value: 192.170.0.10
+          - name: DATABASE_PORT
+            value: "3306"
+          - name: DATABASE_PASSWORD
+            value: dontsharethepassworddespiteislocal
