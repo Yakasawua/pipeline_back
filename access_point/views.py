@@ -37,7 +37,7 @@ class AccessPointByCoordinatesViewSet(viewsets.ModelViewSet):
             # Get the latitude and longitude parameters from the GET request
             lat = self.request.query_params.get('lat', None)
             lon = self.request.query_params.get('lon', None)
-            if (lat is not None) and (lon is not None):
+            if ((lat is not None) and (lon is not None) and (lat >= -90 and lat <= 90 and lon >= -180 and lon <= 180) ):
                 
                 #transform latitude and longitude to float and radians
                 radlat = Radians(float(lat))
