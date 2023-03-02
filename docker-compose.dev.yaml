@@ -1,0 +1,65 @@
+version: '3.9'
+
+x-enviroment:
+    &db-enviroment
+    MYSQL_ROOT_PASSWORD: dontsharethepassworddespiteislocal
+    MYSQL_DATABASE: pipelinedb
+
+x-volumes:
+    &db-volumes
+    - mysql_volumen_dev_pipeline:/var/lib/mysql
+
+services:
+
+    db:
+        image: mysql:5.7
+        environment: *db-enviroment
+        volumes: *db-volumes
+        ports:
+            - 3309:3306
+        networks:
+            dock:
+                ipv4_address: 192.170.0.10
+
+    pipeline_back:
+        build:
+            context: ./pipeline_back
+            dockerfile: Dockerfile.pipeline_back.dev
+        ports:
+            - 8013:8011
+        command: python manage.py runserver 0.0.0.0:8011
+        volumes:
+            - ./pipeline_back:/usr/src/app/
+        depends_on:
+            - db
+        networks:
+            dock:
+                ipv4_address: 192.170.0.11
+
+    pipeline-front:
+        build: 
+            context: ./pipeline-front
+            dockerfile: Dockerfile.pipeline-front.dev
+        environment:
+            NODE_ENV: development
+            CHOKIDAR_USEPOLLING: "true"
+        ports:
+            - 4200:4200
+        command: "ng serve --host 0.0.0.0 --poll=2000 --port 4200 --disable-host-check"
+        volumes:
+            - ./pipeline-front:/usr/src/app/
+        depends_on:
+            - pipeline_back
+        networks:
+            dock:
+                ipv4_address: 192.170.0.12
+
+networks:
+    dock:
+        driver: bridge
+        ipam:
+            config:
+                - subnet: 192.170.0.0/24
+
+volumes:
+    mysql_volumen_dev_pipeline:
